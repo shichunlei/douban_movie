@@ -24,6 +24,7 @@ export 'ui/filter_view.dart';
 export 'ui/item_range.dart';
 export 'ui/star_rate.dart';
 export 'ui/first_movie_view.dart';
+export 'ui/menu.dart';
 
 export 'movie_tag_list.dart';
 export 'movie_classify_page.dart';

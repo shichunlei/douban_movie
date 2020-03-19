@@ -13,3 +13,10 @@ void pushNewPage(BuildContext context, Widget routePage,
     }
   });
 }
+
+void pushAndRemovePage(BuildContext context, Widget routePage) {
+  Navigator.of(context).pushAndRemoveUntil(
+    MaterialPageRoute(builder: (context) => routePage),
+    (route) => route == null,
+  );
+}

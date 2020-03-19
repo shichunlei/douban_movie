@@ -185,4 +185,31 @@ class HttpUtils {
   void cancelRequests(CancelToken token) {
     token.cancel("cancelled");
   }
+
+  Future<Response> download(url, savePath,
+      {Function(int count, int total) onReceiveProgress,
+      CancelToken cancelToken}) async {
+    debugPrint('download请求启动! url：$url');
+    Response response;
+    try {
+      response =
+          await Dio(BaseOptions(receiveTimeout: 30000, connectTimeout: 30000))
+              .download(
+        url,
+        savePath,
+        cancelToken: cancelToken,
+        onReceiveProgress: (int count, int total) {
+          debugPrint(
+              'onReceiveProgress: ${(count / total * 100).toStringAsFixed(0)} %');
+
+          onReceiveProgress(count, total);
+        },
+      );
+    } on DioError catch (e) {
+      debugPrint(e.response.toString());
+      formatError(e);
+    }
+
+    return response;
+  }
 }

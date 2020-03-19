@@ -45,7 +45,6 @@ class _MovieHomePageState extends State<MovieHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('豆瓣电影'),
-        automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
               icon: Icon(FontAwesome.filter),
@@ -91,6 +90,7 @@ class _MovieHomePageState extends State<MovieHomePage> {
         ),
         loaderState: _status,
       ),
+      drawer: Drawer(child: MenuView()),
     );
   }
 
