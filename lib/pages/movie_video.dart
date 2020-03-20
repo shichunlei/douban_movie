@@ -22,7 +22,7 @@ class _MovieVideoPageState extends State<MovieVideoPage> {
     videoPlayerController = VideoPlayerController.network(this.widget.url);
     chewieController = ChewieController(
       videoPlayerController: videoPlayerController,
-      aspectRatio: 16 / 9,
+      aspectRatio: videoPlayerController.value.aspectRatio,
       autoPlay: true,
       looping: true,
       allowedScreenSleep: false,
