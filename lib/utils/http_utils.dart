@@ -12,8 +12,6 @@ class HttpUtils {
 
   Dio _dio;
 
-  CancelToken cancelToken = CancelToken();
-
   Dio get dio => _dio;
 
   HttpUtils() {
@@ -23,16 +21,19 @@ class HttpUtils {
       baseUrl: ApiUrl.BASE_URL,
 
       /// 连接服务器超时时间，单位是毫秒.
-      connectTimeout: 15000,
+      connectTimeout: 30000,
 
       /// 接收数据的总时限.
-      receiveTimeout: 15000,
+      receiveTimeout: 30000,
 
       /// [表示期望以那种格式(方式)接受响应数据。接受四种类型 `json`, `stream`, `plain`, `bytes`. 默认值是 `json`](https://github.com/flutterchina/dio/issues/30)
       responseType: ResponseType.plain,
 
       /// Http请求头.
-      headers: {"version": "1.0.0"},
+      headers: {
+        "version": "1.0.0",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
     );
 
     _dio = Dio(options);
@@ -85,8 +86,6 @@ class HttpUtils {
     String path, {
     Map<String, dynamic> data,
     String method: GET,
-    CancelToken cancelToken,
-    Options options,
   }) async {
     if (data != null) {
       /// restful 请求处理
@@ -110,14 +109,14 @@ class HttpUtils {
           path,
           data: data != null ? FormData.fromMap(data) : null,
           queryParameters: data,
-          options: _checkOptions(method, options),
+          options: Options(method: method),
           onReceiveProgress: (int count, int total) {
         debugPrint(
             'onReceiveProgress: ${(count / total * 100).toStringAsFixed(0)} %');
       }, onSendProgress: (int count, int total) {
         debugPrint(
             'onSendProgress: ${(count / total * 100).toStringAsFixed(0)} %');
-      }, cancelToken: cancelToken);
+      });
 
       /// 响应数据，可能已经被转换了类型, 详情请参考Options中的[ResponseType].
       debugPrint('$method请求成功!response.data：${response.data}');
@@ -144,18 +143,6 @@ class HttpUtils {
     }
   }
 
-  /// check Options.
-  Options _checkOptions(method, options) {
-    if (options == null) {
-      options = Options(
-        contentType: "application/x-www-form-urlencoded",
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      );
-    }
-    options.method = method;
-    return options;
-  }
-
   /// error统一处理
   void formatError(DioError e) {
     if (e.type == DioErrorType.CONNECT_TIMEOUT) {
@@ -179,22 +166,13 @@ class HttpUtils {
     }
   }
 
-  /// 取消请求
-  ///
-  /// 同一个cancel token 可以用于多个请求，当一个cancel token取消时，所有使用该cancel token的请求都会被取消。所以参数可选
-  void cancelRequests(CancelToken token) {
-    token.cancel("cancelled");
-  }
-
   Future<Response> download(url, savePath,
       {Function(int count, int total) onReceiveProgress,
       CancelToken cancelToken}) async {
     debugPrint('download请求启动! url：$url');
     Response response;
     try {
-      response =
-          await Dio(BaseOptions(receiveTimeout: 30000, connectTimeout: 30000))
-              .download(
+      response = await _dio.download(
         url,
         savePath,
         cancelToken: cancelToken,

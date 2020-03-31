@@ -139,7 +139,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
   /// 下载apk
   _download(BuildContext context, String url, String savePath) async {
     try {
-      HttpUtils().download(url, savePath,
+      await HttpUtils().download(url, savePath,
           onReceiveProgress: (int count, int total) async {
         setState(() => _value = count / total);
 
