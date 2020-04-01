@@ -79,7 +79,6 @@ class HttpUtils {
   /// [method] The request method.
   /// [path] The url path.
   /// [data] The request data
-  /// [options] The request options.
   ///
   /// String 返回 json data .
   Future<BaseResult> request(
